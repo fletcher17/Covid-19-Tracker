@@ -15,6 +15,7 @@ function App() {
   const [tableData, setTableData] = useState([]);
   const [mapCenter, setMapCenter] = useState({lat: 34.80746, lng: -40.4796});
   const [mapZoom, setMapZoom] = useState(3);
+  const [mapCountries, setMapCountries] = useState([]);
 
 
 useEffect(() => {
@@ -36,6 +37,7 @@ useEffect (() => {
       }));
       const sortedData = sortData(data);
       setTableData(sortedData);
+      setMapCountries(data);
       setCountries(countries);
     })
   };
@@ -52,7 +54,9 @@ useEffect (() => {
     .then(response => response.json())
     .then(data => {
         setCountry(countryCode);
-        setCountryInfo(data)
+        setCountryInfo(data);
+        setMapCenter([data.countryInfo.lat, data.countryInfo.lng]);
+        setMapZoom(4);
     })
   };
 
@@ -77,7 +81,7 @@ useEffect (() => {
           <InfoBox title='Coronavirus recoveries' cases={countryInfo.todayRecovered} total={countryInfo.recovered}/>
           <InfoBox title='coronavirus deaths' cases={countryInfo.cases} total={countryInfo.deaths}/>
         </div>
-          <Map center={mapCenter} zoom={mapZoom}/>
+          <Map countries={mapCountries} center={mapCenter} zoom={mapZoom}/>
       </div>
       <Card className='app__right'>
         <CardContent>
