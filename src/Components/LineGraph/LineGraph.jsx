@@ -49,7 +49,14 @@ const options = {
 	  		},
 	  }
 
-	  		const buildChartData = (data, casesType ='cases') => {
+	  			
+
+
+const LineGraph = ({casesType='cases', ...props}) => {
+	const [data, setData] = useState({});
+
+
+	const buildChartData = (data, casesType ='cases') => {
 			const chartData = [];
 			let lastDataPoint;
 			for(let date in data.cases) {
@@ -63,40 +70,39 @@ const options = {
 					lastDataPoint = data[casesType][date];
 			}
 				return chartData;
-		}	
-
-
-const LineGraph = ({casesType='cases'}) => {
-	const [data, setData] = useState({});
+		}
 
 
 	useEffect(() => {
 		const fetchData = async () => {
 		await fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=120')
-		.then((response) => response.json())
-		.then(data => {
-			const chartData = buildChartData(data);
+		.then((response) => {
+			return response.json();
+		})
+		.then((data) => {
+			let chartData = buildChartData(data, "cases");
 			setData(chartData);
 		});
 	}
 		fetchData();
-}, [casesType])
+}, []);
 
 	
 
 
 	return (
-			<div>
-			  <h1> I'm a Graph</h1>
+			<div className={props.className}>
 			  {data?.length > 0 && (
-			  	  <Line options={options} data ={{
+			  	  <Line options={options} data={{
 			  		datasets: [{
-			  		data: 'data',
-			  		backgroundColor: 'rgba(204, 16, 52, 0.5)',
-			  		borderColor: '#CC1034'
-			  	},]
-			  }}/>
-			  	)}
+			  		data: data,
+			  		backgroundColor: "rgba(204, 16, 52, 0.5)",
+			  		borderColor: "#CC1034"
+			  	},
+			  	],
+			  }}
+			  />
+		)}
 			
 			</div>
 	)
